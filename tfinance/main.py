@@ -199,10 +199,10 @@ def main():
         get_all_stocks()
     except Exception as e:
         logging.error(e)
+
     application = Application.builder().token(os.getenv("TOKEN")).build()
     job_queue = application.job_queue
 
-    # Ежедневные задачи.
     job_queue.run_daily(
         notify_assignees,
         datetime.time(
@@ -218,7 +218,6 @@ def main():
         ),
     )
 
-    # Обработчик для игры.
     game_handler = ConversationHandler(
         entry_points=[CommandHandler("game", game_menu)],
         states={
@@ -231,7 +230,6 @@ def main():
     )
     application.add_handler(game_handler)
 
-    # Регистрируем обработчик команд.
     application.add_handler(CommandHandler("daily", daily))
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_msg))
@@ -242,7 +240,6 @@ def main():
     application.add_handler(CommandHandler("stocks", get_list_stocks))
     application.add_handler(CommandHandler("stats", stats))
 
-    # Обработка сообщений.
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
