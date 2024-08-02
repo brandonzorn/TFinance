@@ -8,6 +8,7 @@ from pathlib import Path
 import warnings
 
 import pytz
+from dotenv import load_dotenv
 from telegram import Update
 
 # Работа с telegram-bot-api.
@@ -28,7 +29,6 @@ from exceptions import EmptyDataFrameError, WrongPeriodError
 from functions import create_user
 from game import game_menu, game_results, higher_game, lower_game
 from graphics.visualize import do_stock_image
-from safety_key import TOKEN
 from stock import check_stock, get_all_stocks, load_stocks
 
 
@@ -193,13 +193,13 @@ async def stats(update: Update, _):
 
 # Основной цикл, активирующийся при запуске.
 def main():
+    load_dotenv()
     # Получение и сохранение списка всех акций в stocks.json.
     try:
         get_all_stocks()
     except Exception as e:
         logging.error(e)
-
-    application = Application.builder().token(TOKEN).build()
+    application = Application.builder().token(os.getenv("TOKEN")).build()
     job_queue = application.job_queue
 
     # Ежедневные задачи.

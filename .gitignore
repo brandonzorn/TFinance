@@ -1,5 +1,5 @@
 /.idea
-/logs
-/data.db
-/safety_key.py
+logs
+data.db
 stocks.json
+.env
