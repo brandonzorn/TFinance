@@ -45,10 +45,10 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd ~/tfinance
+            cd ~/TFinance
             git reset --hard origin/main
             git pull origin main
             source venv/bin/activate
             pip3 install -r requirements/prod.txt
-            cd ~/tfinance/tfinance
+            cd ~/TFinance/tfinance
             python3 main.py
