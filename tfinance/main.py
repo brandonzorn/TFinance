@@ -191,7 +191,6 @@ async def stats(update: Update, _):
         )
 
 
-# Основной цикл, активирующийся при запуске.
 def main():
     load_dotenv()
     # Получение и сохранение списка всех акций в stocks.json.
