@@ -34,7 +34,7 @@ def check_stock(stock_name: str) -> bool:
 
 # Сохранение списка акций в json.
 def save_stocks(file_name: str, stocks: list):
-    with Path(f"{Path.cwd()}/{file_name}").open("w") as f:
+    with (Path.cwd() / file_name).open("w") as f:
         json.dump(stocks, f)
 
 
