@@ -52,3 +52,5 @@ jobs:
             pip3 install -r requirements/prod.txt
             cd ~/TFinance/tfinance
             python3 main.py
+            deactivate
+            cd ~
