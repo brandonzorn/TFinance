@@ -1,0 +1,12 @@
+name: "tfinance"
+
+services:
+  main_tfinance:
+    build: .
+    container_name: tfinance
+    env_file:
+      - ./.env
+    restart: always
+    volumes:
+      - ./for_docker/logs:/tfinance/logs
+      - ./for_docker/:/tfinance/data.db

@@ -46,11 +46,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ~/TFinance
-            git reset --hard origin/main
+            git reset --hard origin/main  
             git pull origin main
-            source venv/bin/activate
-            pip3 install -r requirements/prod.txt
-            cd ~/TFinance/tfinance
-            python3 main.py
-            deactivate
-            cd ~
+            docker compose down -v
+            docker compose up --build -d

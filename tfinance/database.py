@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 from models import User
@@ -22,7 +23,7 @@ class Database:
 
     def __init__(self):
         # Подключение к БД с отключенной проверкой потока.
-        self.con = sqlite3.connect("data.db", check_same_thread=False)
+        self.con = sqlite3.connect(os.getcwd() + "data.db", check_same_thread=False)
         self.cur = self.con.cursor()
         self.setup()
 
