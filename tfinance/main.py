@@ -33,7 +33,7 @@ from stock import check_stock, get_all_stocks, load_stocks
 
 
 # Запускаем логирование
-logs_path = Path(f"{os.getcwd()}/logs")
+logs_path = Path("logs")
 if not logs_path.exists():
     logs_path.mkdir(exist_ok=True)
 logging.basicConfig(

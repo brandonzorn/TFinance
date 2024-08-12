@@ -14,7 +14,7 @@ HEADERS = {
 
 # Загрузка списка всех акций.
 def load_stocks(file_name: str) -> list[dict[str, str]]:
-    path = Path(f"{Path.cwd()}/{file_name}")
+    path = Path(f"{file_name}")
     if path.exists():
         with path.open() as f:
             return json.load(f)
@@ -34,7 +34,7 @@ def check_stock(stock_name: str) -> bool:
 
 # Сохранение списка акций в json.
 def save_stocks(file_name: str, stocks: list):
-    with (Path.cwd() / file_name).open("w") as f:
+    with Path(file_name).open("w") as f:
         json.dump(stocks, f)
 
 
