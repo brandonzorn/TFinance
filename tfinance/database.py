@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 
 from models import User
-from tfinance.config import DATABASE_NAME
+from config import DATABASE_NAME
 
 
 def singleton(cls):
@@ -25,7 +25,7 @@ class Database:
     def __init__(self):
         # Подключение к БД с отключенной проверкой потока.
         Path("sqlite").mkdir(exist_ok=True)
-        self.con = sqlite3.connect(f"{DATABASE_NAME}.db", check_same_thread=False)
+        self.con = sqlite3.connect(f"sqlite/{DATABASE_NAME}.db", check_same_thread=False)
         self.cur = self.con.cursor()
         self.setup()
 

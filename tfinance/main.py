@@ -27,7 +27,7 @@ from functions import create_user
 from game import game_menu, game_results, higher_game, lower_game
 from graphics.visualize import do_stock_image
 from stock import check_stock, get_all_stocks, load_stocks
-from tfinance.config import BOT_TOKEN, TIMEZONE
+from config import BOT_TOKEN, TIMEZONE
 
 # Запускаем логирование
 logs_path = Path("logs")
