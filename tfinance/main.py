@@ -3,12 +3,9 @@
 # Встроенные библиотеки.
 import datetime
 import logging
-import os
 from pathlib import Path
 import warnings
 
-import pytz
-from dotenv import load_dotenv
 from telegram import Update
 
 # Работа с telegram-bot-api.
@@ -30,7 +27,7 @@ from functions import create_user
 from game import game_menu, game_results, higher_game, lower_game
 from graphics.visualize import do_stock_image
 from stock import check_stock, get_all_stocks, load_stocks
-
+from tfinance.config import BOT_TOKEN, TIMEZONE
 
 # Запускаем логирование
 logs_path = Path("logs")
@@ -192,28 +189,27 @@ async def stats(update: Update, _):
 
 
 def main():
-    load_dotenv()
     # Получение и сохранение списка всех акций в stocks.json.
     try:
         get_all_stocks()
     except Exception as e:
         logging.error(e)
 
-    application = Application.builder().token(os.getenv("TOKEN")).build()
+    application = Application.builder().token(BOT_TOKEN).build()
     job_queue = application.job_queue
 
     job_queue.run_daily(
         notify_assignees,
         datetime.time(
             hour=8,
-            tzinfo=pytz.timezone("Europe/Moscow"),
+            tzinfo=TIMEZONE,
         ),
     )
     job_queue.run_daily(
         game_results,
         datetime.time(
             hour=3,
-            tzinfo=pytz.timezone("Europe/Moscow"),
+            tzinfo=TIMEZONE,
         ),
     )
 
