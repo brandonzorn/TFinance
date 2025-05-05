@@ -32,7 +32,7 @@ from config import BOT_TOKEN, TIMEZONE
 Path("logs").mkdir(exist_ok=True)
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.WARNING,
+    level=logging.INFO,
     handlers=[
         logging.FileHandler(
             datetime.datetime.now(tz=TIMEZONE).strftime("logs/%Y-%m-%d_%H-%M-%S.log"),
