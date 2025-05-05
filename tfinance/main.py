@@ -1,5 +1,5 @@
-# -------------------------- Основной файл приложения -------------------------- #
-# --------------- Импорт необходимых библиотек, функций, классов --------------- #
+# ------------------------ Основной файл приложения ------------------------ #
+# ------------- Импорт необходимых библиотек, функций, классов ------------- #
 # Встроенные библиотеки.
 import datetime
 import logging
@@ -9,9 +9,7 @@ from telegram import Update
 
 # Работа с telegram-bot-api.
 from telegram.ext import (
-    CallbackQueryHandler,
     CommandHandler,
-    ConversationHandler,
     Application,
     ContextTypes,
 )
@@ -23,7 +21,7 @@ from blast import daily, notify_assignees
 from database import Database
 from exceptions import EmptyDataFrameError, WrongPeriodError
 from functions import create_user
-from game import game_menu, game_results, higher_game, lower_game
+from game import game_handler, game_results
 from graphics.visualize import do_stock_image
 from stock import check_stock, get_all_stocks, load_stocks
 from config import BOT_TOKEN, TIMEZONE
@@ -218,16 +216,6 @@ def main():
         ),
     )
 
-    game_handler = ConversationHandler(
-        entry_points=[CommandHandler("game", game_menu)],
-        states={
-            1: [
-                CallbackQueryHandler(higher_game, pattern="^1$"),
-                CallbackQueryHandler(lower_game, pattern="^2$"),
-            ],
-        },
-        fallbacks=[CommandHandler("game", game_menu)],
-    )
     application.add_handler(game_handler)
 
     application.add_handler(CommandHandler("daily", daily))

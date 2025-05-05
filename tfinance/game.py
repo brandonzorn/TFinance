@@ -1,5 +1,15 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ContextTypes, CallbackContext
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Update,
+)
+from telegram.ext import (
+    ContextTypes,
+    CallbackContext,
+    ConversationHandler,
+    CommandHandler,
+    CallbackQueryHandler,
+)
 
 from database import Database
 from exceptions import (
@@ -201,3 +211,15 @@ async def game_results(context: CallbackContext):
         # Удаляем пройденные прогнозы
         db.delete_predictions(user)
         user.prediction = db.get_predictions(user)
+
+
+game_handler = ConversationHandler(
+    entry_points=[CommandHandler("game", game_menu)],
+    states={
+        1: [
+            CallbackQueryHandler(higher_game, pattern="^1$"),
+            CallbackQueryHandler(lower_game, pattern="^2$"),
+        ],
+    },
+    fallbacks=[CommandHandler("game", game_menu)],
+)
