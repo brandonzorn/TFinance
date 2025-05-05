@@ -4,7 +4,6 @@
 import datetime
 import logging
 from pathlib import Path
-import warnings
 
 from telegram import Update
 
@@ -30,18 +29,20 @@ from stock import check_stock, get_all_stocks, load_stocks
 from config import BOT_TOKEN, TIMEZONE
 
 # Запускаем логирование
-logs_path = Path("logs")
-if not logs_path.exists():
-    logs_path.mkdir(exist_ok=True)
+Path("logs").mkdir(exist_ok=True)
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.WARNING,
-    filename=f"{logs_path}/tfinance_main.log",
+    handlers=[
+        logging.FileHandler(
+            datetime.datetime.now(tz=TIMEZONE).strftime("logs/%Y-%m-%d_%H-%M-%S.log"),
+            encoding="utf-8",
+        ),
+        logging.StreamHandler(),
+    ],
 )
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
-
-# Отключаем предупреждения пользователей библиотек
-warnings.simplefilter("ignore")
 
 
 # Получение списка необходимых акций по команде /stocks [args].
