@@ -53,5 +53,10 @@ def get_all_stocks():
         .get("table")
         .get("rows")
     )
-    stocks = [{"symbol": i.get("symbol"), "name": i.get("name")} for i in stocks]
+    stocks = [
+        {
+            "symbol": i.get("symbol"),
+            "name": i.get("name"),
+        } for i in stocks
+    ]
     save_stocks("stocks.json", stocks)

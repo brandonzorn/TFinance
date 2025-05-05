@@ -35,7 +35,9 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=[
         logging.FileHandler(
-            datetime.datetime.now(tz=TIMEZONE).strftime("logs/%Y-%m-%d_%H-%M-%S.log"),
+            datetime.datetime.now(
+                tz=TIMEZONE,
+            ).strftime("logs/%Y-%m-%d_%H-%M-%S.log"),
             encoding="utf-8",
         ),
         logging.StreamHandler(),
@@ -84,7 +86,8 @@ async def get_stock_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     except WrongPeriodError:
         await update.message.reply_text(
-            "Неверный период. Доступные периоды: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max",
+            "Неверный период. "
+            "Доступные периоды: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max",
         )
     except EmptyDataFrameError:
         await update.message.reply_text(
@@ -150,7 +153,8 @@ async def follow(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_text("Акция не найдена")
     else:
         await update.message.reply_text(
-            "Неверный способ ввода. /follow [индекс акции]. Например: /follow AAPL",
+            "Неверный способ ввода. "
+            "/follow [индекс акции]. Например: /follow AAPL",
         )
 
 
