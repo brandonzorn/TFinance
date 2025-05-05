@@ -57,7 +57,8 @@ def get_all_stocks():
         {
             "symbol": i.get("symbol"),
             "name": i.get("name"),
-        } for i in stocks
+        }
+        for i in stocks
     ]
     save_stocks("stocks.json", stocks)
 
