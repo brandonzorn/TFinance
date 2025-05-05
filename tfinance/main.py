@@ -26,6 +26,8 @@ from graphics.visualize import do_stock_image
 from stock import check_stock, get_all_stocks, load_stocks
 from config import BOT_TOKEN, TIMEZONE
 
+__all__ = []
+
 # Запускаем логирование
 Path("logs").mkdir(exist_ok=True)
 logging.basicConfig(

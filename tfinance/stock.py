@@ -60,3 +60,10 @@ def get_all_stocks():
         } for i in stocks
     ]
     save_stocks("stocks.json", stocks)
+
+
+__all__ = [
+    "check_stock",
+    "get_all_stocks",
+    "load_stocks",
+]

@@ -63,3 +63,9 @@ def check_stock_prices(stock_name) -> bool:
     curr_price = stock["Close"][-1]
 
     return curr_price > prev_price
+
+
+__all__ = [
+    "check_stock_prices",
+    "do_stock_image",
+]

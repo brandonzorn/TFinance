@@ -36,3 +36,9 @@ async def daily(update: Update, _):
     else:
         await update.message.reply_text("Ежедневная рассылка включена")
     db.user_daily_notify(user)
+
+
+__all__ = [
+    "daily",
+    "notify_assignees",
+]

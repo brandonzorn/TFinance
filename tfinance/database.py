@@ -353,3 +353,8 @@ class Database:
         )
         user.points += 1
         self.con.commit()
+
+
+__all__ = [
+    "Database",
+]

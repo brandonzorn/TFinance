@@ -21,3 +21,8 @@ class User:
         self.prediction = prediction
         self.selected_stock = selected_stock
         self.points: int = 0
+
+
+__all__ = [
+    "User",
+]

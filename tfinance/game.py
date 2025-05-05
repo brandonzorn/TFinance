@@ -223,3 +223,9 @@ game_handler = ConversationHandler(
     },
     fallbacks=[CommandHandler("game", game_menu)],
 )
+
+
+__all__ = [
+    "game_handler",
+    "game_results",
+]
