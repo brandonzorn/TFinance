@@ -168,7 +168,7 @@ class Database:
         )
         self.con.commit()
 
-    def get_selected_stock_byid(self, user: User, message_id) -> str:
+    def get_selected_stock_byid(self, user: User, message_id) -> str | None:
         """
             Получить название акции по id сообщения с игрой.
         :param user: Экземпляр класса User с данными об этом пользователе.
@@ -182,6 +182,7 @@ class Database:
             for i in data.split():
                 if str(message_id) == i.split(":")[-1]:
                     return i.split(":")[0]
+        return None
 
     def get_selected_stocks(self, user: User) -> list:
         """

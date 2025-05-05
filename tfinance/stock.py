@@ -25,8 +25,7 @@ def load_stocks(file_name: str) -> list[dict[str, str]]:
 def check_stock(stock_name: str) -> bool:
     try:
         stock = yf.download(stock_name, period="1mo")
-        if stock["Close"][-2]:
-            return True
+        return bool(stock["Close"][-2])
     except Exception as e:
         logging.exception(e)
         return False
