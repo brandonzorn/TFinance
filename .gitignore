@@ -1,5 +1,6 @@
 /.idea
-/logs
-/data.db
-/safety_key.py
+logs
+sqlite
+*.db
 stocks.json
+.env

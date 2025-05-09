@@ -1,20 +1,15 @@
-# -------------------------- Основной файл приложения -------------------------- #
-# --------------- Импорт необходимых библиотек, функций, классов --------------- #
+# ------------------------ Основной файл приложения ------------------------ #
+# ------------- Импорт необходимых библиотек, функций, классов ------------- #
 # Встроенные библиотеки.
 import datetime
 import logging
-import os
 from pathlib import Path
-import warnings
 
-import pytz
 from telegram import Update
 
 # Работа с telegram-bot-api.
 from telegram.ext import (
-    CallbackQueryHandler,
     CommandHandler,
-    ConversationHandler,
     Application,
     ContextTypes,
 )
@@ -26,25 +21,30 @@ from blast import daily, notify_assignees
 from database import Database
 from exceptions import EmptyDataFrameError, WrongPeriodError
 from functions import create_user
-from game import game_menu, game_results, higher_game, lower_game
+from game import game_handler, game_results
 from graphics.visualize import do_stock_image
-from safety_key import TOKEN
 from stock import check_stock, get_all_stocks, load_stocks
+from config import BOT_TOKEN, TIMEZONE
 
+__all__ = []
 
 # Запускаем логирование
-logs_path = Path(f"{os.getcwd()}/logs")
-if not logs_path.exists():
-    logs_path.mkdir(exist_ok=True)
+Path("logs").mkdir(exist_ok=True)
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.WARNING,
-    filename=f"{logs_path}/tfinance_main.log",
+    level=logging.INFO,
+    handlers=[
+        logging.FileHandler(
+            datetime.datetime.now(
+                tz=TIMEZONE,
+            ).strftime("logs/%Y-%m-%d_%H-%M-%S.log"),
+            encoding="utf-8",
+        ),
+        logging.StreamHandler(),
+    ],
 )
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
-
-# Отключаем предупреждения пользователей библиотек
-warnings.simplefilter("ignore")
 
 
 # Получение списка необходимых акций по команде /stocks [args].
@@ -86,7 +86,8 @@ async def get_stock_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     except WrongPeriodError:
         await update.message.reply_text(
-            "Неверный период. Доступные периоды: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max",
+            "Неверный период. "
+            "Доступные периоды: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max",
         )
     except EmptyDataFrameError:
         await update.message.reply_text(
@@ -152,7 +153,8 @@ async def follow(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_text("Акция не найдена")
     else:
         await update.message.reply_text(
-            "Неверный способ ввода. /follow [индекс акции]. Например: /follow AAPL",
+            "Неверный способ ввода. "
+            "/follow [индекс акции]. Например: /follow AAPL",
         )
 
 
@@ -191,7 +193,6 @@ async def stats(update: Update, _):
         )
 
 
-# Основной цикл, активирующийся при запуске.
 def main():
     # Получение и сохранение списка всех акций в stocks.json.
     try:
@@ -199,39 +200,26 @@ def main():
     except Exception as e:
         logging.error(e)
 
-    application = Application.builder().token(TOKEN).build()
+    application = Application.builder().token(BOT_TOKEN).build()
     job_queue = application.job_queue
 
-    # Ежедневные задачи.
     job_queue.run_daily(
         notify_assignees,
         datetime.time(
             hour=8,
-            tzinfo=pytz.timezone("Europe/Moscow"),
+            tzinfo=TIMEZONE,
         ),
     )
     job_queue.run_daily(
         game_results,
         datetime.time(
             hour=3,
-            tzinfo=pytz.timezone("Europe/Moscow"),
+            tzinfo=TIMEZONE,
         ),
     )
 
-    # Обработчик для игры.
-    game_handler = ConversationHandler(
-        entry_points=[CommandHandler("game", game_menu)],
-        states={
-            1: [
-                CallbackQueryHandler(higher_game, pattern="^1$"),
-                CallbackQueryHandler(lower_game, pattern="^2$"),
-            ],
-        },
-        fallbacks=[CommandHandler("game", game_menu)],
-    )
     application.add_handler(game_handler)
 
-    # Регистрируем обработчик команд.
     application.add_handler(CommandHandler("daily", daily))
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_msg))
@@ -242,7 +230,6 @@ def main():
     application.add_handler(CommandHandler("stocks", get_list_stocks))
     application.add_handler(CommandHandler("stats", stats))
 
-    # Обработка сообщений.
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 

@@ -1,8 +1,22 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ContextTypes, CallbackContext
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Update,
+)
+from telegram.ext import (
+    ContextTypes,
+    CallbackContext,
+    ConversationHandler,
+    CommandHandler,
+    CallbackQueryHandler,
+)
 
 from database import Database
-from exceptions import EmptyDataFrameError, PredictionAlreadySet, StockSelectedAlready
+from exceptions import (
+    EmptyDataFrameError,
+    PredictionAlreadySet,
+    StockSelectedAlready,
+)
 from functions import create_user
 from graphics.visualize import check_stock_prices, do_stock_image
 from models import User
@@ -17,12 +31,14 @@ async def game_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Сохраняем id сообщения для возможности одновременной
     message_id = str(int(update.message.message_id) + 2)
     # Игры на многих акциях.
-    # Прибавляем 2 т.к. отправляем 2 сообщения: фото и приписку к нему с клавиатурой.
+    # Прибавляем 2 т.к. отправляем 2 сообщения:
+    # фото и приписку к нему с клавиатурой.
     try:
         # Проверка на наличие аргументов.
         if not context.args:
             await update.message.reply_text(
-                "Неправильно введена команда! Попробуйте: /game [индекс акции]",
+                "Неправильно введена команда! "
+                "Попробуйте: /game [индекс акции]",
             )
         # Проверка: была ли выбрана акция до этого? Избегаем читерства.
         if db.check_selected_stocks(user):
@@ -80,7 +96,8 @@ async def game_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         db.remove_selected_stock(user, message_id)
 
-    # Возвращаем 1, чтобы показать ConversationHandler'у состояние, в котором находимся.
+    # Возвращаем 1, чтобы показать ConversationHandler'у состояние,
+    # в котором находимся.
     return 1
 
 
@@ -194,3 +211,21 @@ async def game_results(context: CallbackContext):
         # Удаляем пройденные прогнозы
         db.delete_predictions(user)
         user.prediction = db.get_predictions(user)
+
+
+game_handler = ConversationHandler(
+    entry_points=[CommandHandler("game", game_menu)],
+    states={
+        1: [
+            CallbackQueryHandler(higher_game, pattern="^1$"),
+            CallbackQueryHandler(lower_game, pattern="^2$"),
+        ],
+    },
+    fallbacks=[CommandHandler("game", game_menu)],
+)
+
+
+__all__ = [
+    "game_handler",
+    "game_results",
+]

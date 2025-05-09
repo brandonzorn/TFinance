@@ -5,7 +5,7 @@ import yfinance as yf
 
 from exceptions import EmptyDataFrameError, WrongPeriodError
 
-time_periods = {
+TIME_PERIODS = {
     "1d": "за 1 день",
     "5d": "за 5 дней",
     "1mo": "за 1 месяц",
@@ -27,7 +27,7 @@ def do_stock_image(stock_name, period="1mo"):
     :param period: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
     :return: Картинка в байтовом формате.
     """
-    if period not in time_periods:
+    if period not in TIME_PERIODS:
         raise WrongPeriodError
     # Забираем данные из Yahoo Finance.
     stock = yf.download(stock_name, period=period)
@@ -38,7 +38,10 @@ def do_stock_image(stock_name, period="1mo"):
 
     # Создаем полотно с графиком.
     stock["Close"].plot(grid=True)
-    plt.title(f"Курс акции {stock_name} {time_periods.get(period)}", fontsize=14)
+    plt.title(
+        f"Курс акции {stock_name} {TIME_PERIODS.get(period)}",
+        fontsize=14,
+    )
     plt.gca().set(ylabel="Price USD")
 
     # Записываем полученный график в байты и возвращаем полученное изображение.
@@ -60,3 +63,9 @@ def check_stock_prices(stock_name) -> bool:
     curr_price = stock["Close"][-1]
 
     return curr_price > prev_price
+
+
+__all__ = [
+    "check_stock_prices",
+    "do_stock_image",
+]

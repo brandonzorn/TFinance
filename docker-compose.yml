@@ -1,0 +1,10 @@
+services:
+  tfinance_bot:
+    build: .
+    container_name: tfinance_bot
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    volumes:
+      - ./etc_tfinance/logs:/tfinance/logs
+      - ./etc_tfinance/sqlite:/tfinance/sqlite

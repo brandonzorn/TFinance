@@ -13,3 +13,8 @@ def create_user(update: Update) -> User:
         user_data["language_code"],
         user_data["is_bot"],
     )
+
+
+__all__ = [
+    "create_user",
+]

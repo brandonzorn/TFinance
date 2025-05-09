@@ -1,6 +1,8 @@
 import sqlite3
+from pathlib import Path
 
 from models import User
+from config import DATABASE_NAME
 
 
 def singleton(cls):
@@ -22,7 +24,11 @@ class Database:
 
     def __init__(self):
         # Подключение к БД с отключенной проверкой потока.
-        self.con = sqlite3.connect("data.db", check_same_thread=False)
+        Path("sqlite").mkdir(exist_ok=True)
+        self.con = sqlite3.connect(
+            f"sqlite/{DATABASE_NAME}.db",
+            check_same_thread=False,
+        )
         self.cur = self.con.cursor()
         self.setup()
 
@@ -111,7 +117,8 @@ class Database:
         if predictions[0]:
             prediction = f"{predictions[0]} {prediction}"
         self.cur.execute(
-            f"UPDATE users SET prediction = ' {prediction}' WHERE id = {user.id}",
+            f"UPDATE users SET prediction = ' {prediction}' "
+            f"WHERE id = {user.id}",
         )
         self.con.commit()
 
@@ -145,7 +152,9 @@ class Database:
         :param user: Экземпляр класса User с данными об этом пользователе.
         :return: None
         """
-        self.cur.execute(f"UPDATE users SET prediction = '' WHERE id = {user.id}")
+        self.cur.execute(
+            f"UPDATE users SET prediction = '' WHERE id = {user.id}",
+        )
         self.con.commit()
 
     def select_stock(self, user: User, stock_name: str):
@@ -161,11 +170,12 @@ class Database:
         if selected_stocks:
             stock_name = f"{selected_stocks} {stock_name}"
         self.cur.execute(
-            f"UPDATE users SET selected_stock = '{stock_name}' WHERE id = {user.id}",
+            f"UPDATE users SET selected_stock = '{stock_name}' "
+            f"WHERE id = {user.id}",
         )
         self.con.commit()
 
-    def get_selected_stock_byid(self, user: User, message_id) -> str:
+    def get_selected_stock_byid(self, user: User, message_id) -> str | None:
         """
             Получить название акции по id сообщения с игрой.
         :param user: Экземпляр класса User с данными об этом пользователе.
@@ -179,6 +189,7 @@ class Database:
             for i in data.split():
                 if str(message_id) == i.split(":")[-1]:
                     return i.split(":")[0]
+        return None
 
     def get_selected_stocks(self, user: User) -> list:
         """
@@ -253,7 +264,8 @@ class Database:
         if stocks and stocks[0]:
             stock_name = f"{stocks[0]} {stock_name}"
         self.cur.execute(
-            f"UPDATE users SET favourites_stocks = '{stock_name}' WHERE id = {user.id}",
+            f"UPDATE users SET favourites_stocks = '{stock_name}' "
+            f"WHERE id = {user.id}",
         )
         self.con.commit()
 
@@ -299,7 +311,8 @@ class Database:
             else:
                 a = f"'{' '.join(a)}'"
             self.cur.execute(
-                f"UPDATE users SET favourites_stocks = {a} WHERE id = {user.id}",
+                f"UPDATE users SET favourites_stocks = {a} "
+                f"WHERE id = {user.id}",
             )
             self.con.commit()
 
@@ -310,7 +323,8 @@ class Database:
         :return: None
         """
         self.cur.execute(
-            f"UPDATE users SET daily_notify = NOT daily_notify WHERE id = {user.id}",
+            f"UPDATE users SET daily_notify = NOT daily_notify "
+            f"WHERE id = {user.id}",
         )
         self.con.commit()
 
@@ -339,3 +353,8 @@ class Database:
         )
         user.points += 1
         self.con.commit()
+
+
+__all__ = [
+    "Database",
+]

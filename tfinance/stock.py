@@ -14,7 +14,7 @@ HEADERS = {
 
 # Загрузка списка всех акций.
 def load_stocks(file_name: str) -> list[dict[str, str]]:
-    path = Path(f"{Path.cwd()}/{file_name}")
+    path = Path(f"{file_name}")
     if path.exists():
         with path.open() as f:
             return json.load(f)
@@ -25,8 +25,7 @@ def load_stocks(file_name: str) -> list[dict[str, str]]:
 def check_stock(stock_name: str) -> bool:
     try:
         stock = yf.download(stock_name, period="1mo")
-        if stock["Close"][-2]:
-            return True
+        return bool(stock["Close"][-2])
     except Exception as e:
         logging.exception(e)
         return False
@@ -34,7 +33,7 @@ def check_stock(stock_name: str) -> bool:
 
 # Сохранение списка акций в json.
 def save_stocks(file_name: str, stocks: list):
-    with Path(f"{Path.cwd()}/{file_name}").open("w") as f:
+    with Path(file_name).open("w") as f:
         json.dump(stocks, f)
 
 
@@ -54,5 +53,18 @@ def get_all_stocks():
         .get("table")
         .get("rows")
     )
-    stocks = [{"symbol": i.get("symbol"), "name": i.get("name")} for i in stocks]
+    stocks = [
+        {
+            "symbol": i.get("symbol"),
+            "name": i.get("name"),
+        }
+        for i in stocks
+    ]
     save_stocks("stocks.json", stocks)
+
+
+__all__ = [
+    "check_stock",
+    "get_all_stocks",
+    "load_stocks",
+]

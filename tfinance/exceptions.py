@@ -14,3 +14,11 @@ class EmptyDataFrameError(Exception):  # Пустой дата фрейм
 
 class WrongPeriodError(Exception):  # Неверный период
     pass
+
+
+__all__ = [
+    "StockSelectedAlready",
+    "PredictionAlreadySet",
+    "EmptyDataFrameError",
+    "WrongPeriodError",
+]
